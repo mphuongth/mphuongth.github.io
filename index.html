@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phương — tools for work and life</title>
+<meta name="description" content="Four tools I built for work and life. Three of them run entirely on your machine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Be+Vietnam+Pro:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F4F1;
+    --ink:#131218;
+    --muted:#797685;
+    --rule:#DEDBD5;
+    --fill:#4A32E8;      /* fills the whole row — identity constant, same in both themes */
+    --on-fill:#FFFFFF;
+    --accent:#4A32E8;    /* text & link colour */
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#0E0D14;
+      --ink:#EFEEF2;
+      --muted:#807D8E;
+      --rule:#232130;
+      --accent:#AA9BFF;
+    }
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Be Vietnam Pro", system-ui, sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .page{max-width:820px;margin:0 auto;padding:0 30px}
+
+  .mono{
+    font-family:"JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-size:.7rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* ───────────────────────── header ───────────────────────── */
+  header{padding:11vh 0 8vh}
+
+  .who{
+    display:flex;align-items:center;gap:.65rem;
+    margin-bottom:3.4rem;
+  }
+  .who .mark{
+    width:11px;height:11px;background:var(--fill);
+    border-radius:2px;
+    transform:rotate(45deg);
+    flex:0 0 auto;
+  }
+  .who span{color:var(--ink)}
+
+  h1{
+    font-family:"Bricolage Grotesque", system-ui, sans-serif;
+    font-weight:800;
+    font-size:clamp(2.2rem, 6.4vw, 4.15rem);
+    line-height:1.03;
+    letter-spacing:-.03em;
+    max-width:14ch;
+  }
+  h1 .hl{
+    color:var(--fill);
+  }
+  @media (prefers-color-scheme: dark){ h1 .hl{color:var(--accent)} }
+
+  .intro{
+    margin-top:2.2rem;
+    max-width:48ch;
+    font-size:1.05rem;
+    color:var(--muted);
+  }
+  .intro strong{color:var(--ink);font-weight:500}
+
+  /* ───────────────────────── list ───────────────────────── */
+  .list{border-top:1px solid var(--rule);padding-bottom:2rem}
+  .item{border-bottom:1px solid var(--rule)}
+
+  .row{
+    display:flex;
+    align-items:center;
+    gap:1.5rem;
+    width:calc(100% + 2.2rem);
+    padding:1.7rem 1.1rem;
+    margin:0 -1.1rem;
+    background:transparent;
+    border:0;
+    text-align:left;
+    color:inherit;
+    font:inherit;
+    cursor:pointer;
+    border-radius:4px;
+    transition:background .18s ease, color .18s ease;
+  }
+  .row:hover,
+  .row[aria-expanded="true"]{
+    background:var(--fill);
+    color:var(--on-fill);
+  }
+
+  .row .name{
+    font-family:"Bricolage Grotesque", system-ui, sans-serif;
+    font-weight:700;
+    font-size:clamp(1.35rem, 3.2vw, 1.95rem);
+    letter-spacing:-.02em;
+    line-height:1.15;
+    flex:0 0 auto;
+  }
+
+  .row .gist{
+    flex:1 1 auto;
+    font-size:.95rem;
+    color:var(--muted);
+    transition:color .18s ease;
+  }
+  .row:hover .gist,
+  .row[aria-expanded="true"] .gist{color:rgba(255,255,255,.72)}
+
+  .row .where{
+    flex:0 0 auto;
+    font-family:"JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-size:.66rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    white-space:nowrap;
+    transition:color .18s ease;
+  }
+  .row:hover .where,
+  .row[aria-expanded="true"] .where{color:rgba(255,255,255,.72)}
+
+  /* ───────────────────────── expanded panel ───────────────────────── */
+  .detail{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows .32s cubic-bezier(.2,.8,.2,1);
+  }
+  .row[aria-expanded="true"] + .detail{grid-template-rows:1fr}
+  .detail > div{overflow:hidden}
+
+  .detail .inner{
+    padding:1.5rem 0 2rem 1.1rem;
+    border-left:2px solid var(--fill);
+    opacity:0;
+    transition:opacity .24s ease .06s;
+  }
+  .row[aria-expanded="true"] + .detail .inner{opacity:1}
+
+  .detail p{max-width:52ch;font-size:1rem}
+
+  .detail .meta{
+    margin-top:1.2rem;
+    display:flex;
+    gap:1.6rem;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .detail a.open{
+    font-family:"JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-size:.7rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--on-fill);
+    background:var(--fill);
+    text-decoration:none;
+    padding:.55rem .9rem;
+    border-radius:3px;
+    transition:opacity .16s;
+  }
+  .detail a.open:hover{opacity:.82}
+
+  .detail .soon{
+    padding:.55rem .9rem;
+    border:1px dashed var(--rule);
+    border-radius:3px;
+    text-transform:none;
+    letter-spacing:.04em;
+  }
+
+  /* ───────────────────────── footer ───────────────────────── */
+  footer{
+    border-top:1px solid var(--rule);
+    margin-top:4rem;
+    padding:2.5rem 0 12vh;
+    display:flex;
+    gap:1.8rem;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  footer a{
+    color:var(--muted);
+    text-decoration:none;
+    font-family:"JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-size:.72rem;
+    letter-spacing:.05em;
+  }
+  footer a:hover{color:var(--accent)}
+  footer .fine{margin-left:auto}
+
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+
+  @media (max-width:640px){
+    header{padding:7vh 0 5vh}
+    .row{
+      flex-wrap:wrap;
+      gap:.3rem 1rem;
+      padding:1.3rem 1rem;
+    }
+    .row .gist{flex:1 1 100%;order:3;font-size:.9rem}
+    .row .where{margin-left:auto}
+    footer .fine{margin-left:0;flex:1 1 100%}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <p class="who mono"><i class="mark"></i> <span>Phương</span> · QA engineer</p>
+
+    <h1>Tools I needed, for <span class="hl">work and life</span>.</h1>
+
+    <p class="intro">
+      Sharing them here in case they help you too. <strong>Three of the four run entirely on your machine</strong>
+      — no account, nothing uploaded. Tap a name to see what it does.
+    </p>
+  </header>
+
+  <main class="list" id="list"></main>
+
+  <footer>
+    <a href="mailto:mphuongth@gmail.com">mphuongth@gmail.com</a>
+    <a href="https://github.com/mphuongth" target="_blank" rel="noopener">github.com/mphuongth</a>
+    <span class="fine mono">Updated July 2026</span>
+  </footer>
+
+</div>
+
+<script>
+/* =====================================================================
+   ⬇️  EDIT HERE — add or remove tools in this array; the page rebuilds itself.
+   ===================================================================== */
+const TOOLS = [
+  {
+    name: "Cairn",
+    gist: "Goal-based personal finance",
+    where: "on the web",
+    detail: "Brings mutual funds, term deposits, gold, and insurance into one place, then turns your goals — a house, an emergency fund, retirement — into what you need to set aside each month.",
+    built: "Next.js + Supabase",
+    url: "https://cairn-money.vercel.app/",
+    cta: "Open app ↗",
+  },
+  {
+    name: "QA Tools",
+    gist: "Paste a PR link, get the checklist",
+    where: "on your machine",
+    detail: "Not a diff summary — the actual list of screens to verify, and the places that might break alongside them. Plus a rollout note ready for Slack, and a report of what really shipped to production.",
+    built: "Plain Node, zero dependencies",
+    url: "",                    // ⚠️ empty = no link shown. Fill this in once the repo is public.
+    cta: "GitHub ↗",
+    pending: "Cleaning it up for release",
+  },
+  {
+    name: "BA Analyst",
+    gist: "Client brief in, questions and user stories out",
+    where: "on your machine",
+    detail: "Feed it the brief and the wireframes, then walk through 13 steps you approve one at a time. Out comes a question list for the client and a story breakdown for the dev team. Runs on your existing Claude subscription — no API key needed.",
+    built: "Claude Code skill + React",
+    url: "https://ba-skill.vercel.app/",
+    cta: "See the site ↗",
+  },
+  {
+    name: "Video Zoom Editor",
+    gist: "Add zooms and callouts after you record",
+    where: "on your machine · beta",
+    detail: "Move the playhead to the moment that matters, click where the viewer should look, then export an MP4. The footage never leaves your machine.",
+    built: "Node + ffmpeg",
+    url: "https://github.com/mphuongth/video-tools",
+    cta: "GitHub ↗",
+  },
+];
+
+const list = document.getElementById("list");
+
+list.innerHTML = TOOLS.map((t, i) => `
+  <section class="item">
+    <button class="row" aria-expanded="false" aria-controls="d${i}">
+      <span class="name">${t.name}</span>
+      <span class="gist">${t.gist}</span>
+      <span class="where">${t.where}</span>
+    </button>
+    <div class="detail" id="d${i}">
+      <div>
+        <div class="inner">
+          <p>${t.detail}</p>
+          <div class="meta">
+            ${t.url
+              ? `<a class="open" href="${t.url}" target="_blank" rel="noopener">${t.cta}</a>`
+              : `<span class="soon mono">${t.pending}</span>`}
+            <span class="mono">${t.built}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+`).join("");
+
+// only one item open at a time
+list.querySelectorAll(".row").forEach(row => {
+  row.addEventListener("click", () => {
+    const wasOpen = row.getAttribute("aria-expanded") === "true";
+    list.querySelectorAll(".row").forEach(r => r.setAttribute("aria-expanded", "false"));
+    row.setAttribute("aria-expanded", String(!wasOpen));
+  });
+});
+</script>
+</body>
+</html>

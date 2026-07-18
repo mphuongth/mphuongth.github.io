@@ -72,25 +72,32 @@
   .group-name{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink);}
   .group-count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:oklch(0.6 0.01 260);}
 
-  /* ── tool card ── */
-  .tool{
-    display:grid;grid-template-columns:56px 1fr;gap:0 28px;padding:36px 0;
-    border-bottom:1px solid var(--line);align-items:start;
-    transition:background .18s;border-radius:8px;
+  /* ── tool row (one line; click to expand) ── */
+  .row{border-bottom:1px solid var(--line);}
+  .row-head{
+    display:flex;align-items:center;gap:14px;
+    width:calc(100% + 20px);margin:0 -10px;padding:15px 10px;
+    background:none;border:0;cursor:pointer;color:inherit;font:inherit;text-align:left;
+    border-radius:8px;transition:background .16s;
   }
-  .tool:hover{background:var(--hover);}
-  .rail{display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:6px;}
-  .rail .icon{width:40px;height:40px;border:1px solid var(--line-soft);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--accent);}
-  .rail .num{font-family:'IBM Plex Mono',monospace;font-size:12px;color:oklch(0.62 0.01 260);}
-  .head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;}
-  .tool h2{font-size:clamp(22px,3.2vw,30px);font-weight:600;letter-spacing:-0.02em;margin:0;}
-  .badge{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.03em;padding:5px 11px;border-radius:100px;white-space:nowrap;}
+  .row-head:hover{background:var(--hover);}
+  .row-icon{flex:0 0 auto;width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--accent);}
+  .row-icon svg{width:20px;height:20px;}
+  .row-name{flex:1 1 auto;font-weight:600;font-size:17px;letter-spacing:-0.01em;transition:color .16s;}
+  .row-head[aria-expanded="true"] .row-name{color:var(--accent);}
+  .row-caret{flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--ink-3);transition:transform .2s;}
+  .row-head[aria-expanded="true"] .row-caret{transform:rotate(90deg);}
+  .badge{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.03em;padding:5px 11px;border-radius:100px;white-space:nowrap;flex:0 0 auto;}
   .badge.local{border:1px solid var(--local-border);color:var(--accent);background:var(--local-bg);}
   .badge.web{border:1px solid var(--web-border);color:var(--web-color);background:var(--web-bg);}
-  .tool .desc{font-size:16px;line-height:1.6;color:oklch(0.42 0.012 260);max-width:62ch;margin:14px 0 0;text-wrap:pretty;}
-  .cta{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent);margin-top:20px;}
-  .cta .arr{font-size:14px;transition:transform .18s;}
-  .tool:hover .cta .arr{transform:translateX(3px);}
+  .row-detail{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s cubic-bezier(.2,.8,.2,1);}
+  .row-head[aria-expanded="true"] + .row-detail{grid-template-rows:1fr;}
+  .row-detail > div{overflow:hidden;}
+  .row-detail-inner{padding:2px 10px 20px 46px;opacity:0;transition:opacity .2s ease .04s;}
+  .row-head[aria-expanded="true"] + .row-detail .row-detail-inner{opacity:1;}
+  .row-detail .desc{font-size:15.5px;line-height:1.6;color:oklch(0.42 0.012 260);max-width:60ch;margin:0;text-wrap:pretty;}
+  .row-detail .cta{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent);margin-top:16px;}
+  .row-detail .cta .arr{font-size:14px;}
 
   /* ── about ── */
   .about{display:grid;grid-template-columns:56px 1fr;gap:0 28px;padding:70px 0 40px;}
@@ -106,9 +113,9 @@
   @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
   @media (max-width:640px){
     .hero{padding:60px 0 28px;}
-    .tool,.about{grid-template-columns:1fr;}
-    .rail{flex-direction:row;gap:14px;padding-top:0;margin-bottom:18px;}
+    .about{grid-template-columns:1fr;}
     .about .star{display:none;}
+    .row-detail-inner{padding-left:10px;}
   }
 </style>
 </head>
@@ -207,33 +214,41 @@ const GROUPS = [
   {key:'life', label:'Life'},
 ];
 
-const card = (t, num) => `
-  <a class="tool" href="${t.href}" target="_blank" rel="noopener">
-    <div class="rail">
-      <div class="icon">${ICON[t.icon]}</div>
-      <span class="num">${num}</span>
+const row = (t, i) => `
+  <div class="row">
+    <button class="row-head" aria-expanded="false" aria-controls="d${i}">
+      <span class="row-icon">${ICON[t.icon]}</span>
+      <span class="row-name">${t.name}</span>
+      <span class="badge ${t.local ? 'local' : 'web'}">${t.local ? 'runs locally' : t.badge}</span>
+      <span class="row-caret" aria-hidden="true">›</span>
+    </button>
+    <div class="row-detail" id="d${i}">
+      <div><div class="row-detail-inner">
+        <p class="desc">${t.desc}</p>
+        <a class="cta" href="${t.href}" target="_blank" rel="noopener">${t.cta} <span class="arr">→</span></a>
+      </div></div>
     </div>
-    <div>
-      <div class="head">
-        <h2>${t.name}</h2>
-        <span class="badge ${t.local ? 'local' : 'web'}">${t.local ? 'runs locally' : t.badge}</span>
-      </div>
-      <p class="desc">${t.desc}</p>
-      <span class="cta">${t.cta} <span class="arr">→</span></span>
-    </div>
-  </a>`;
+  </div>`;
 
-let n = 0;
+let i = 0;
 document.getElementById('tools').innerHTML = GROUPS.map(g => {
   const items = TOOLS.filter(t => t.group === g.key);
-  const cards = items.map(t => card(t, String(++n).padStart(2, '0'))).join('');
+  const rows = items.map(t => row(t, i++)).join('');
   return `<div class="group">
     <div class="group-head">
       <span class="group-name">${g.label}</span>
       <span class="group-count">${String(items.length).padStart(2, '0')}</span>
-    </div>${cards}
+    </div>${rows}
   </div>`;
 }).join('');
+
+// one row open at a time
+const heads = Array.from(document.querySelectorAll('.row-head'));
+heads.forEach(h => h.addEventListener('click', () => {
+  const open = h.getAttribute('aria-expanded') === 'true';
+  heads.forEach(x => x.setAttribute('aria-expanded', 'false'));
+  h.setAttribute('aria-expanded', String(!open));
+}));
 </script>
 </body>
 </html>

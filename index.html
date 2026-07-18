@@ -82,6 +82,25 @@
   .cta .arr{font-size:14px;transition:transform .18s;}
   .tool:hover .cta .arr{transform:translateX(3px);}
 
+  /* ── smaller things ── */
+  .also{padding:52px 0 8px;}
+  .also .label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.6 0.01 260);margin-bottom:6px;}
+  .also .list{border-top:1px solid var(--line);}
+  .also-item{
+    display:grid;grid-template-columns:auto 1fr auto;gap:0 16px;align-items:baseline;
+    padding:16px 12px;margin:0 -12px;border-bottom:1px solid var(--line);border-radius:8px;
+    transition:background .18s;
+  }
+  .also-item:hover{background:var(--hover);}
+  .also-name{font-weight:600;font-size:16px;letter-spacing:-0.01em;}
+  .also-gist{font-size:13.5px;color:oklch(0.5 0.012 260);text-wrap:pretty;}
+  .also-arr{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);transition:transform .18s;}
+  .also-item:hover .also-arr{transform:translateX(3px);}
+  @media (max-width:640px){
+    .also-item{grid-template-columns:1fr auto;}
+    .also-gist{grid-column:1/-1;order:3;margin-top:2px;}
+  }
+
   /* ── about ── */
   .about{display:grid;grid-template-columns:56px 1fr;gap:0 28px;padding:70px 0 40px;}
   .about .star{font-family:'IBM Plex Mono',monospace;font-size:13px;color:oklch(0.62 0.01 260);padding-top:6px;}
@@ -123,6 +142,11 @@
   </section>
 
   <section class="tools" id="tools"></section>
+
+  <section class="also">
+    <div class="label">Smaller things</div>
+    <div class="list" id="also"></div>
+  </section>
 
   <section class="about">
     <div class="star">*</div>
@@ -177,6 +201,12 @@ const TOOLS = [
   },
 ];
 
+/* ── Smaller things — just a name, a line, and a link. Add a row to grow it. ── */
+const MORE = [
+  {name:'md2mindmap', gist:'Turns a Markdown outline into a mind map you can pan and export.', href:'https://mphuongth.github.io/md2mindmap/'},
+  {name:'gym-tracker', gist:'My gym split for fat loss — A/B checklists, weight logs, a rest timer.', href:'https://mphuongth.github.io/gym-tracker/'},
+];
+
 document.getElementById('tools').innerHTML = TOOLS.map(t => `
   <a class="tool" href="${t.href}" target="_blank" rel="noopener">
     <div class="rail">
@@ -191,6 +221,13 @@ document.getElementById('tools').innerHTML = TOOLS.map(t => `
       <p class="desc">${t.desc}</p>
       <span class="cta">${t.cta} <span class="arr">→</span></span>
     </div>
+  </a>`).join('');
+
+document.getElementById('also').innerHTML = MORE.map(m => `
+  <a class="also-item" href="${m.href}" target="_blank" rel="noopener">
+    <span class="also-name">${m.name}</span>
+    <span class="also-gist">${m.gist}</span>
+    <span class="also-arr">→</span>
   </a>`).join('');
 </script>
 </body>

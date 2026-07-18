@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Phương — tools for work and life</title>
-<meta name="description" content="Four tools I built for work and life. Three of them run entirely on your machine.">
+<meta name="description" content="Six tools I built for work and life. Most run entirely on your machine.">
 <!-- Favicon: the design's three-node mark, rasterized to PNG so Safari renders it. -->
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACHklEQVR42u2bPUoFMRDHc4R3Ey/gIbbyAoL1u4DwwE6ExUbLtbMULSzdRmwt7OzthBVBsIs7ssgakt1MdpNMkhkYeB/7Hvv/5WuykxHC0vZOj6re697b3iVRb4d7rMQa1v/Rpvdd7x1h0SbvhnvfuIqvEhWuA1FhxTcZCFe9KVm8HYTMxU9DGMa8LMQr3WzfFQSg+7c6DMuFLMx3YwBdgQC65Mb+/vlWbm8u5OXj3a/Da/hs0VwwhI7khd++PEmTwXeOIGpBPLaXB1cn8vP7S84ZXAPXYvcOgnrL24gfQ8D2BNIAdN3+7eP9bw6A17rhkAUAaEkbcTpImF5AFgDM8GrLm65VewL8NnkA0MXHBu/XuJYB8BDgSTCdZfDh9bncZfD4vpFYyyYQchXvEArTA2ASrxsOK2yGaAEwiYfPPW2H4wFQhcyJ9+XBARxen2ln7xjigwMA8bYWQnxwAJRaPjgANbSdMkwomwwAdcMyZZjNDAPgIZAIANvwdmrbmywATGwPS2VWADAtH1q8dwBT4a0aCscKycXSpzamzUms2D4IgLlcnWnrSk28EwDbXF0K4tEAsLk66uLRAFxydTAcKD94FZjWD/GYmiyAUIkKsgBCpaoYAA8BngTzWgaxubqsAiGXXF0MAK2PUNg1Vxe6xMbpoKTHg4uhvV50VNZHri7KsfmiD0vzcXkumOCSGS6a4rI5Lpzk0lkuni61fP4HtTqOmj+4qS8AAAAASUVORK5CYII=">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -61,10 +61,20 @@
   .meta .sep{color:oklch(0.8 0.01 260);}
   .meta .hl{color:var(--accent);}
 
-  /* ── tools ── */
-  .tools{border-top:1px solid var(--line);margin-top:20px;}
+  /* ── tool groups ── */
+  .tools{margin-top:14px;}
+  .group + .group{margin-top:6px;}
+  .group-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:44px 0 12px;border-bottom:1px solid var(--line);
+  }
+  .group:first-child .group-head{padding-top:10px;}
+  .group-name{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink);}
+  .group-count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:oklch(0.6 0.01 260);}
+
+  /* ── tool card ── */
   .tool{
-    display:grid;grid-template-columns:56px 1fr;gap:0 28px;padding:40px 0;
+    display:grid;grid-template-columns:56px 1fr;gap:0 28px;padding:36px 0;
     border-bottom:1px solid var(--line);align-items:start;
     transition:background .18s;border-radius:8px;
   }
@@ -73,39 +83,14 @@
   .rail .icon{width:40px;height:40px;border:1px solid var(--line-soft);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--accent);}
   .rail .num{font-family:'IBM Plex Mono',monospace;font-size:12px;color:oklch(0.62 0.01 260);}
   .head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;}
-  .tool h2{font-size:clamp(24px,3.4vw,32px);font-weight:600;letter-spacing:-0.02em;margin:0;}
+  .tool h2{font-size:clamp(22px,3.2vw,30px);font-weight:600;letter-spacing:-0.02em;margin:0;}
   .badge{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.03em;padding:5px 11px;border-radius:100px;white-space:nowrap;}
   .badge.local{border:1px solid var(--local-border);color:var(--accent);background:var(--local-bg);}
   .badge.web{border:1px solid var(--web-border);color:var(--web-color);background:var(--web-bg);}
-  .tool .desc{font-size:16.5px;line-height:1.6;color:oklch(0.42 0.012 260);max-width:62ch;margin:16px 0 0;text-wrap:pretty;}
-  .cta{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent);margin-top:22px;}
+  .tool .desc{font-size:16px;line-height:1.6;color:oklch(0.42 0.012 260);max-width:62ch;margin:14px 0 0;text-wrap:pretty;}
+  .cta{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent);margin-top:20px;}
   .cta .arr{font-size:14px;transition:transform .18s;}
   .tool:hover .cta .arr{transform:translateX(3px);}
-
-  /* ── "More" menu (smaller tools) ── */
-  .menu{position:relative;display:inline-flex;}
-  .menu-trigger{
-    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:oklch(0.5 0.01 260);
-    background:none;border:0;cursor:pointer;padding:0 0 2px;display:inline-flex;align-items:center;gap:6px;
-    border-bottom:1px solid var(--web-border);transition:color .18s;
-  }
-  .menu-trigger:hover,.menu-trigger[aria-expanded="true"]{color:var(--accent);}
-  .menu-caret{font-size:9px;transition:transform .2s;}
-  .menu-trigger[aria-expanded="true"] .menu-caret{transform:rotate(180deg);}
-  .menu-panel{
-    position:absolute;top:calc(100% + 12px);right:0;z-index:30;width:min(288px,82vw);
-    background:oklch(0.995 0.003 95);border:1px solid var(--line);border-radius:12px;
-    box-shadow:0 14px 34px rgba(20,22,30,.13),0 2px 8px rgba(20,22,30,.06);
-    padding:6px;text-align:left;
-    opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .16s,transform .16s;
-  }
-  .menu-panel.open{opacity:1;transform:none;pointer-events:auto;}
-  .menu-head{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.62 0.01 260);padding:8px 12px 6px;}
-  .menu-link{display:block;padding:10px 12px;border-radius:8px;transition:background .15s;}
-  .menu-link:hover{background:var(--hover);}
-  .menu-link .m-name{font-weight:600;font-size:14.5px;letter-spacing:-0.01em;display:flex;justify-content:space-between;align-items:center;gap:10px;}
-  .menu-link .m-name .m-arr{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);}
-  .menu-link .m-gist{font-size:12px;line-height:1.45;color:oklch(0.52 0.012 260);margin-top:3px;text-wrap:pretty;}
 
   /* ── about ── */
   .about{display:grid;grid-template-columns:56px 1fr;gap:0 28px;padding:70px 0 40px;}
@@ -133,10 +118,6 @@
   <header class="top">
     <div class="brand"><span class="name">Phương</span><span class="role">QA&nbsp;engineer</span></div>
     <nav>
-      <div class="menu">
-        <button type="button" class="menu-trigger" id="moreBtn" aria-haspopup="true" aria-expanded="false" aria-controls="morePanel">More <span class="menu-caret" aria-hidden="true">▾</span></button>
-        <div class="menu-panel" id="morePanel" role="menu" aria-label="Smaller tools"></div>
-      </div>
       <a href="mailto:mphuongth@gmail.com">mphuongth@gmail.com</a>
       <a href="https://github.com/mphuongth" target="_blank" rel="noopener">github.com/mphuongth</a>
     </nav>
@@ -145,9 +126,9 @@
   <section class="hero">
     <div class="eyebrow">Tools · for work and life</div>
     <h1>Tools I needed, for work and life.</h1>
-    <p class="lede">Sharing them here in case they help you too. <strong>Three of the four run entirely on your machine</strong> — no account, nothing uploaded.</p>
+    <p class="lede">Sharing them here in case they help you too. <strong>Most run entirely on your machine</strong> — no account, nothing uploaded.</p>
     <div class="meta">
-      <span>04&nbsp;tools</span><span class="sep">/</span><span class="hl">03 run locally</span><span class="sep">/</span><span>updated Jul 2026</span>
+      <span>06&nbsp;tools</span><span class="sep">/</span><span class="hl">most on your device</span><span class="sep">/</span><span>updated Jul 2026</span>
     </div>
   </section>
 
@@ -179,44 +160,58 @@ const ICON = {
   qa:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="12.5" rx="1.6"/><path d="M8 21h8M12 17v4"/><path d="M8.5 10.8l2.3 2.3 4.4-4.6"/></svg>`,
   ba:`<svg width="22" height="22" viewBox="0 0 32 32" fill="none" stroke="currentColor"><path d="M16 7v18" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="3.7" fill="currentColor"/><circle cx="16" cy="16" r="3.2" fill="currentColor"/><circle cx="16" cy="25" r="2.8" stroke-width="2"/></svg>`,
   video:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg>`,
+  mindmap:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="2.5"/><circle cx="18.5" cy="6" r="1.9"/><circle cx="18.5" cy="12" r="1.9"/><circle cx="18.5" cy="18" r="1.9"/><path d="M7.5 11 16.7 6.8M7.5 12h9M7.5 13 16.7 17.2"/></svg>`,
+  gym:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5v5M6.5 7.5v9M17.5 7.5v9M20.5 9.5v5M6.5 12h11"/></svg>`,
 };
 
-/* ── EDIT HERE — one object per tool; the page renders itself. ──
-   local:true  → green "runs locally" badge.  local:false → neutral badge (badge text). */
+/* ── EDIT HERE — one object per tool; the page groups and renders itself.
+   group: 'work' | 'life'.  local:true → green "runs locally" badge;
+   local:false → neutral badge showing the `badge` text. ── */
 const TOOLS = [
+  // ── Work ──
   {
-    num:'01', name:'Cairn', icon:'cairn', local:false, badge:'on the web',
-    desc:'Brings mutual funds, term deposits, gold, and insurance into one place — then turns your goals (a house, an emergency fund, retirement) into what you need to set aside each month.',
-    cta:'Open Cairn', href:'https://cairn-money.vercel.app/',
-  },
-  {
-    num:'02', name:'QA tools', icon:'qa', local:true,
+    group:'work', name:'QA tools', icon:'qa', local:true,
     desc:'Not a diff summary — the actual list of screens to verify and the places that might break alongside them. Plus a rollout note ready for Slack and a production delivery report. Point it at any GitHub repo; there’s nothing to wire up.',
     cta:'View on GitHub', href:'https://github.com/mphuongth/qa-tools',
   },
   {
-    num:'03', name:'BA Workbench', icon:'ba', local:true,
+    group:'work', name:'BA Workbench', icon:'ba', local:true,
     desc:'Feed it the brief and the wireframes, then walk through 13 steps you approve one at a time. Out comes a question list for the client and a story breakdown for the dev team. Runs on your existing Claude subscription — no API key needed.',
     cta:'See the site', href:'https://ba-workbench.vercel.app/',
   },
   {
-    num:'04', name:'Video tools', icon:'video', local:true,
+    group:'work', name:'Video tools', icon:'video', local:true,
     desc:'Two tools on one local server. The zoom editor adds zooms and callouts after you record — move the playhead, click where the viewer should look, export an MP4. The compressor re-encodes a recording down under GitHub’s 25 MiB limit. Footage never leaves your machine.',
     cta:'See the site', href:'https://mphuongth.github.io/video-tools/',
   },
+  {
+    group:'work', name:'md2mindmap', icon:'mindmap', local:false, badge:'in the browser',
+    desc:'Paste a Markdown outline and get a mind map you can pan, rearrange, and export — a quick way to see the shape of a spec or a set of notes.',
+    cta:'Open', href:'https://mphuongth.github.io/md2mindmap/',
+  },
+  // ── Life ──
+  {
+    group:'life', name:'Cairn', icon:'cairn', local:false, badge:'on the web',
+    desc:'Brings mutual funds, term deposits, gold, and insurance into one place — then turns your goals (a house, an emergency fund, retirement) into what you need to set aside each month.',
+    cta:'Open Cairn', href:'https://cairn-money.vercel.app/',
+  },
+  {
+    group:'life', name:'gym-tracker', icon:'gym', local:false, badge:'in the browser',
+    desc:'My fat-loss training split — A/B day checklists, a weight log per set, and a rest timer between them. Everything stays on the device.',
+    cta:'Open', href:'https://mphuongth.github.io/gym-tracker/',
+  },
 ];
 
-/* ── Smaller things — just a name, a line, and a link. Add a row to grow it. ── */
-const MORE = [
-  {name:'md2mindmap', gist:'Turns a Markdown outline into a mind map you can pan and export.', href:'https://mphuongth.github.io/md2mindmap/'},
-  {name:'gym-tracker', gist:'My gym split for fat loss — A/B checklists, weight logs, a rest timer.', href:'https://mphuongth.github.io/gym-tracker/'},
+const GROUPS = [
+  {key:'work', label:'Work'},
+  {key:'life', label:'Life'},
 ];
 
-document.getElementById('tools').innerHTML = TOOLS.map(t => `
+const card = (t, num) => `
   <a class="tool" href="${t.href}" target="_blank" rel="noopener">
     <div class="rail">
       <div class="icon">${ICON[t.icon]}</div>
-      <span class="num">${t.num}</span>
+      <span class="num">${num}</span>
     </div>
     <div>
       <div class="head">
@@ -226,21 +221,19 @@ document.getElementById('tools').innerHTML = TOOLS.map(t => `
       <p class="desc">${t.desc}</p>
       <span class="cta">${t.cta} <span class="arr">→</span></span>
     </div>
-  </a>`).join('');
+  </a>`;
 
-const panel = document.getElementById('morePanel');
-panel.innerHTML = `<div class="menu-head">Smaller things</div>` + MORE.map(m => `
-  <a class="menu-link" href="${m.href}" target="_blank" rel="noopener" role="menuitem">
-    <span class="m-name">${m.name} <span class="m-arr">↗</span></span>
-    <span class="m-gist">${m.gist}</span>
-  </a>`).join('');
-
-const moreBtn = document.getElementById('moreBtn');
-const menu = moreBtn.closest('.menu');
-const setOpen = (o) => { panel.classList.toggle('open', o); moreBtn.setAttribute('aria-expanded', String(o)); };
-moreBtn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!panel.classList.contains('open')); });
-document.addEventListener('click', (e) => { if (!menu.contains(e.target)) setOpen(false); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+let n = 0;
+document.getElementById('tools').innerHTML = GROUPS.map(g => {
+  const items = TOOLS.filter(t => t.group === g.key);
+  const cards = items.map(t => card(t, String(++n).padStart(2, '0'))).join('');
+  return `<div class="group">
+    <div class="group-head">
+      <span class="group-name">${g.label}</span>
+      <span class="group-count">${String(items.length).padStart(2, '0')}</span>
+    </div>${cards}
+  </div>`;
+}).join('');
 </script>
 </body>
 </html>

@@ -82,24 +82,30 @@
   .cta .arr{font-size:14px;transition:transform .18s;}
   .tool:hover .cta .arr{transform:translateX(3px);}
 
-  /* ── smaller things ── */
-  .also{padding:52px 0 8px;}
-  .also .label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.6 0.01 260);margin-bottom:6px;}
-  .also .list{border-top:1px solid var(--line);}
-  .also-item{
-    display:grid;grid-template-columns:auto 1fr auto;gap:0 16px;align-items:baseline;
-    padding:16px 12px;margin:0 -12px;border-bottom:1px solid var(--line);border-radius:8px;
-    transition:background .18s;
+  /* ── "More" menu (smaller tools) ── */
+  .menu{position:relative;display:inline-flex;}
+  .menu-trigger{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:oklch(0.5 0.01 260);
+    background:none;border:0;cursor:pointer;padding:0 0 2px;display:inline-flex;align-items:center;gap:6px;
+    border-bottom:1px solid var(--web-border);transition:color .18s;
   }
-  .also-item:hover{background:var(--hover);}
-  .also-name{font-weight:600;font-size:16px;letter-spacing:-0.01em;}
-  .also-gist{font-size:13.5px;color:oklch(0.5 0.012 260);text-wrap:pretty;}
-  .also-arr{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);transition:transform .18s;}
-  .also-item:hover .also-arr{transform:translateX(3px);}
-  @media (max-width:640px){
-    .also-item{grid-template-columns:1fr auto;}
-    .also-gist{grid-column:1/-1;order:3;margin-top:2px;}
+  .menu-trigger:hover,.menu-trigger[aria-expanded="true"]{color:var(--accent);}
+  .menu-caret{font-size:9px;transition:transform .2s;}
+  .menu-trigger[aria-expanded="true"] .menu-caret{transform:rotate(180deg);}
+  .menu-panel{
+    position:absolute;top:calc(100% + 12px);right:0;z-index:30;width:min(288px,82vw);
+    background:oklch(0.995 0.003 95);border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 14px 34px rgba(20,22,30,.13),0 2px 8px rgba(20,22,30,.06);
+    padding:6px;text-align:left;
+    opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .16s,transform .16s;
   }
+  .menu-panel.open{opacity:1;transform:none;pointer-events:auto;}
+  .menu-head{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.62 0.01 260);padding:8px 12px 6px;}
+  .menu-link{display:block;padding:10px 12px;border-radius:8px;transition:background .15s;}
+  .menu-link:hover{background:var(--hover);}
+  .menu-link .m-name{font-weight:600;font-size:14.5px;letter-spacing:-0.01em;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .menu-link .m-name .m-arr{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);}
+  .menu-link .m-gist{font-size:12px;line-height:1.45;color:oklch(0.52 0.012 260);margin-top:3px;text-wrap:pretty;}
 
   /* ── about ── */
   .about{display:grid;grid-template-columns:56px 1fr;gap:0 28px;padding:70px 0 40px;}
@@ -127,6 +133,10 @@
   <header class="top">
     <div class="brand"><span class="name">Phương</span><span class="role">QA&nbsp;engineer</span></div>
     <nav>
+      <div class="menu">
+        <button type="button" class="menu-trigger" id="moreBtn" aria-haspopup="true" aria-expanded="false" aria-controls="morePanel">More <span class="menu-caret" aria-hidden="true">▾</span></button>
+        <div class="menu-panel" id="morePanel" role="menu" aria-label="Smaller tools"></div>
+      </div>
       <a href="mailto:mphuongth@gmail.com">mphuongth@gmail.com</a>
       <a href="https://github.com/mphuongth" target="_blank" rel="noopener">github.com/mphuongth</a>
     </nav>
@@ -142,11 +152,6 @@
   </section>
 
   <section class="tools" id="tools"></section>
-
-  <section class="also">
-    <div class="label">Smaller things</div>
-    <div class="list" id="also"></div>
-  </section>
 
   <section class="about">
     <div class="star">*</div>
@@ -223,12 +228,19 @@ document.getElementById('tools').innerHTML = TOOLS.map(t => `
     </div>
   </a>`).join('');
 
-document.getElementById('also').innerHTML = MORE.map(m => `
-  <a class="also-item" href="${m.href}" target="_blank" rel="noopener">
-    <span class="also-name">${m.name}</span>
-    <span class="also-gist">${m.gist}</span>
-    <span class="also-arr">→</span>
+const panel = document.getElementById('morePanel');
+panel.innerHTML = `<div class="menu-head">Smaller things</div>` + MORE.map(m => `
+  <a class="menu-link" href="${m.href}" target="_blank" rel="noopener" role="menuitem">
+    <span class="m-name">${m.name} <span class="m-arr">↗</span></span>
+    <span class="m-gist">${m.gist}</span>
   </a>`).join('');
+
+const moreBtn = document.getElementById('moreBtn');
+const menu = moreBtn.closest('.menu');
+const setOpen = (o) => { panel.classList.toggle('open', o); moreBtn.setAttribute('aria-expanded', String(o)); };
+moreBtn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!panel.classList.contains('open')); });
+document.addEventListener('click', (e) => { if (!menu.contains(e.target)) setOpen(false); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 </script>
 </body>
 </html>
